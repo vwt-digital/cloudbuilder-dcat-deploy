@@ -1,22 +1,29 @@
 ---
 steps:
   # Clone cost-control public repo
-  - name: 'gcr.io/cloud-builders/git'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
+    id: 'clone dcat deploy source repo'
+    entrypoint: 'git'
     args:
       - 'clone'
       - '--branch=${BRANCH_NAME}'
       - 'https://github.com/vwt-digital/dcat-deploy.git'
 
   # Build an image.
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
+    id: 'build docker image'
+    entrypoint: 'docker'
     args: ['build', '-t', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-dcat-deploy', '.']
 
   # Push the image.
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
+    id: 'push docker image'
+    entrypoint: 'docker'
     args: ['push', 'eu.gcr.io/$PROJECT_ID/cloudbuilder-dcat-deploy']
 
   # Only keep the 10 most recent images
-  - name: 'gcr.io/cloud-builders/gcloud-slim'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
+    id: 'cleanup older docker images'
     entrypoint: 'bash'
     args:
       - '-c'
@@ -29,14 +36,17 @@ steps:
         done
 
   # Delete weekly rebuild scheduled job to allow recreation
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
+    id: 'remove schedule'
     entrypoint: 'bash'
     args:
       - '-c'
       - 'gcloud scheduler jobs delete --quiet ${REPO_NAME}-weekly-rebuild || exit 0'
 
   # Create weekly rebuild scheduled job
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
+    id: 'create weekly rebuild schedule'
+    entrypoint: 'gcloud'
     args:
       - 'scheduler'
       - 'jobs'
