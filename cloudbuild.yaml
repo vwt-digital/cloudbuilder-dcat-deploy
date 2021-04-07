@@ -1,6 +1,6 @@
 ---
 steps:
-    # Clone cost-control public repo
+  # Clone cost-control public repo
   - name: 'gcr.io/cloud-builders/git'
     args:
       - 'clone'
