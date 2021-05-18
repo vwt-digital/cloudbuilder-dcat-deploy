@@ -1,6 +1,5 @@
 FROM gcr.io/google.com/cloudsdktool/cloud-sdk:latest
 
 COPY dcat-deploy /home/dcat-deploy
-COPY dcat_deploy.sh /usr/bin
 
-ENTRYPOINT ["/usr/bin/dcat_deploy.sh"]
+ENTRYPOINT ["/home/dcat-deploy/deploy_dcat_gcp.sh"]
